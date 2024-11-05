@@ -608,8 +608,19 @@ def citas_asignadas():
         id_profesional = obtener_id_usuario_actual()
        
         cur = mysql.connection.cursor()
+        
+        # Actualiza el estado de las citas en tiempo real
         cur.execute("""
-            SELECT c.id_consulta, u.nombre AS nombre_paciente, u.numero_documento, u.correo AS correo_paciente, c.fecha_consulta, c.hora_consulta, c.motivo
+            UPDATE Consultas 
+            SET estado = 'tomada' 
+            WHERE fecha_consulta < CURDATE() AND estado = 'pendiente';
+        """)
+        
+        # Ahora selecciona las citas
+        cur.execute("""
+            SELECT c.id_consulta, u.nombre AS nombre_paciente, u.numero_documento, u.correo AS correo_paciente, 
+                   c.fecha_consulta, c.hora_consulta, c.motivo, 
+                   c.estado
             FROM Consultas c
             JOIN Usuarios u ON c.id_usuario = u.id_usuario
             WHERE c.id_profesional = %s
@@ -617,10 +628,11 @@ def citas_asignadas():
        
         citas = cur.fetchall()
         cur.close()
-       
+        
         return render_template('citas_asignadas.html', citas=citas)
     else:
         return redirect(url_for('index'))
+
 class Consulta:
     def __init__(self, id_consulta, numero_documento, fecha_consulta, hora_consulta, motivo, diagnostico, tratamiento):
         self.id_consulta = id_consulta
