@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\RYZEN 5\Downloads\SANAMED-main\SANAMED-main\SANAMED\SANAMED\SANAMED1\SANAMED_MS\venv"
+VIRTUAL_ENV="C:\Users\RYZEN 5\Downloads\SANAMED-main\SANAMED-main\SANAMED\SANAMED\SANAMED1\MICRO_SANAMED\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
