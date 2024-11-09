@@ -6,7 +6,7 @@ from functools import wraps
 
 import random
 
-app = Flask(__name__, template_folder="auth_service/templates")
+app = Flask(__name__, template_folder="home/templates")
 app.secret_key = "sanamed"
 
 
