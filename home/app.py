@@ -3,6 +3,7 @@ from datetime import datetime,date, timedelta
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify,flash
 from flask_mysqldb import MySQL
 from functools import wraps
+from flask_cors import CORS
 
 import random
 
@@ -16,6 +17,20 @@ app.config["MYSQL_USER"] = "root"
 app.config["MYSQL_PASSWORD"] = ""
 app.config["MYSQL_DB"] = "sanamed2"
 mysql = MySQL(app)
+app.config["MYSQL_HOST"] = "db"  # Este es el nombre del servicio en docker-compose
+app.config["MYSQL_USER"] = "root"
+app.config["MYSQL_PASSWORD"] = ""
+app.config["MYSQL_DB"] = "sanamed2"
+mysql = MySQL(app)
+
+# Configuración CORS para permitir la comunicación entre servicios
+CORS(app, origins=[
+    "http://localhost:5000",
+    "http://localhost:5001", 
+    "http://localhost:5002",
+    "http://localhost:5003"
+])
+
 
 def obtener_id_usuario_actual():
     if 'id_usuario' in session:
@@ -92,12 +107,12 @@ def login():
             session['id_usuario'] = user_data[0]
             session['last_activity'] = datetime.now().isoformat()  # Agregar timestamp
 
-            if rol == 'usuario':
-                return redirect(url_for('user_home'))
+            if rol == 'admin':
+                return redirect('http://localhost:5001/admin_home')
+            elif rol == 'usuario':
+                return redirect('http://localhost:5002/user_home')
             elif rol == 'profesional':
-                return redirect(url_for('profesional_home'))
-            elif rol == 'admin':
-                return redirect(url_for('admin_home'))
+                return redirect('http://localhost:5003/profesional_home')
         else:
             return render_template('index.html', error="Credenciales incorrectas")
 

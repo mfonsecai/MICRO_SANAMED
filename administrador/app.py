@@ -3,7 +3,6 @@ from datetime import datetime,date, timedelta
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify,flash
 from flask_mysqldb import MySQL
 from functools import wraps
-from flask_cors import CORS
 import random
 
 app = Flask(__name__)
@@ -15,7 +14,6 @@ app.config["MYSQL_PASSWORD"] = ""
 app.config["MYSQL_DB"] = "sanamed2"
 mysql = MySQL(app)
 
-CORS(app, origins=["http://localhost:5000", "http://localhost:5001", "http://localhost:5002", "http://localhost:5003"])
 
 def admin_required(f):
     @wraps(f)
