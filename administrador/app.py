@@ -4,8 +4,10 @@ from flask import Flask, render_template, request, session, redirect, url_for, j
 from flask_mysqldb import MySQL
 from functools import wraps
 import random
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:5000", "http://localhost:5001", "http://localhost:5002", "http://localhost:5003"])
 
 # Configuración MySQL
 app.config["MYSQL_HOST"] = "db"

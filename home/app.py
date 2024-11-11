@@ -1,15 +1,13 @@
 import re
-from datetime import datetime,date, timedelta
-from flask import Flask, render_template, request, session, redirect, url_for, jsonify,flash
+from datetime import datetime, timedelta
+from flask import Flask, render_template, request, session, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from functools import wraps
 from flask_cors import CORS
 
-import random
-
 app = Flask(__name__)
+CORS(app)
 app.secret_key = "sanamed"
-
 
 # Configuración MySQL
 app.config["MYSQL_HOST"] = "db"
@@ -17,20 +15,6 @@ app.config["MYSQL_USER"] = "root"
 app.config["MYSQL_PASSWORD"] = ""
 app.config["MYSQL_DB"] = "sanamed2"
 mysql = MySQL(app)
-app.config["MYSQL_HOST"] = "db"  # Este es el nombre del servicio en docker-compose
-app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = ""
-app.config["MYSQL_DB"] = "sanamed2"
-mysql = MySQL(app)
-
-# Configuración CORS para permitir la comunicación entre servicios
-CORS(app, origins=[
-    "http://localhost:5000",
-    "http://localhost:5001", 
-    "http://localhost:5002",
-    "http://localhost:5003"
-])
-
 
 def obtener_id_usuario_actual():
     if 'id_usuario' in session:
@@ -41,7 +25,6 @@ def obtener_id_usuario_actual():
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        # Verificar si el usuario está logueado
         if not session.get('logged_in'):
             flash('Por favor inicie sesión para acceder a esta página', 'error')
             return redirect(url_for('index'))
@@ -59,7 +42,6 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-
 def validate_password(password):
     if len(password) < 8:
         return False
@@ -68,7 +50,6 @@ def validate_password(password):
     if not re.search("[!@#$%^&*()_+=\[{\]};:<>|./?,-]", password):
         return False
     return True
-
 
 @app.route('/')
 def index():
@@ -83,7 +64,6 @@ def login():
        
         cur = mysql.connection.cursor()
         
-       
         # Buscar en la tabla de usuarios
         cur.execute("SELECT id_usuario FROM Usuarios WHERE correo = %s AND contrasena = %s AND tipo_perfil = %s", (username, password, rol))
         user_data = cur.fetchone()
@@ -101,28 +81,26 @@ def login():
 
         cur.close()
 
-
         if user_data:
             session['logged_in'] = True
             session['id_usuario'] = user_data[0]
             session['last_activity'] = datetime.now().isoformat()  # Agregar timestamp
-
-            if rol == 'admin':
-                return redirect('http://localhost:5001/admin_home')
-            elif rol == 'usuario':
-                return redirect('http://localhost:5002/user_home')
+            
+            if rol == 'usuario':
+                return redirect("http://localhost:5002/user_home")  # Cambiar URL a la del microservicio usuario
             elif rol == 'profesional':
-                return redirect('http://localhost:5003/profesional_home')
+                return redirect("http://localhost:5003/profesional_home")  # Cambiar URL a la del microservicio profesional
+            elif rol == 'admin':
+                return redirect("http://localhost:5001/admin_home")  # Cambiar URL a la del microservicio administrador
         else:
-            return render_template('index.html', error="Credenciales incorrectas")
+            flash("Credenciales incorrectas", "error")
+            return render_template('index.html')
 
     return render_template('index.html')
 
-     
 @app.route('/signup', methods=["GET", 'POST'])
 def register():
     if request.method == 'POST':
-        # Obtener los datos del formulario
         nombre = request.form['nombre']
         tipo_documento = request.form['tipo_documento']
         numero_documento = request.form['numero_documento']
@@ -130,26 +108,19 @@ def register():
         correo = request.form['correo']
         contrasena = request.form['contrasena']
 
-
-        # Validar la contraseña
         if not validate_password(contrasena):
             flash("La contraseña debe tener al menos 8 caracteres, una mayúscula y un carácter especial.", "error")
             return render_template('register.html')
 
-
-        # Verificar si el correo electrónico ya está registrado
         cur = mysql.connection.cursor()
         cur.execute("SELECT id_usuario FROM Usuarios WHERE correo = %s", (correo,))
         existing_user = cur.fetchone()
         cur.close()
 
-
         if existing_user:
             flash("El correo electrónico ya está registrado. Por favor, utiliza otro correo electrónico", "error")
             return render_template('register.html')
 
-
-        # Insertar el nuevo usuario en la base de datos
         cur = mysql.connection.cursor()
         try:
             cur.execute(
@@ -157,31 +128,24 @@ def register():
                 (nombre, tipo_documento, numero_documento, celular, correo, contrasena))
             mysql.connection.commit()
             flash("Registro exitoso. Inicia sesión con tus credenciales.", "success")
-            return redirect(url_for('register'))
+            return redirect(url_for('index'))
         except Exception as e:
             mysql.connection.rollback()
-            error = "El número de documento ya se encuentra registrado"
-            flash(error, "error")
-            return render_template('register.html', error=error)
+            flash(f"Error: {e}", "error")
+            return render_template('register.html')
         finally:
             cur.close()
-
 
     return render_template('register.html')
 
 @app.route('/logout')
 def logout():
-    # Limpiar toda la sesión
     session.clear()
-    #flash('Ha cerrado sesión exitosamente', 'success')
-    # Agregar headers para prevenir el cache
     response = redirect(url_for('index'))
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
     return response
 
-
 if __name__ == '__main__':
-    app.secret_key = "sanamed"
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(host='0.0.0.0', port=5000)

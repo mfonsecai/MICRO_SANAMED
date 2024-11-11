@@ -2,57 +2,80 @@ version: '3.8'
 
 services:
   db:
-    image: mysql:5.7
+    image: mysql:latest
+    container_name: sanamed_db
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: yourpassword
       MYSQL_DATABASE: sanamed2
-      MYSQL_USER: root
-      MYSQL_PASSWORD: ""
     ports:
-      - "3306:3306"
+      - "3308:3307"
     volumes:
-      - mysql_data:/var/lib/mysql  # Para persistir datos de MySQL
+      - db_data:/var/lib/mysql
+    networks:
+      - sanamed_network
 
+  administrador:
+    build: ./administrador
+    container_name: administrador_service
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=yourpassword
+      - MYSQL_DB=sanamed2
+    ports:
+      - "5001:5000"
+    networks:
+      - sanamed_network
+    depends_on:
+      - db
 
   home:
     build: ./home
+    container_name: home_service
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=yourpassword
+      - MYSQL_DB=sanamed2
     ports:
-      - "5000:5000"  # Cambiado a 5001 para evitar conflicto
+      - "5000:5000"
+    networks:
+      - sanamed_network
     depends_on:
       - db
-    networks:
-      - sanamed-network
 
   paciente:
     build: ./paciente
+    container_name: paciente_service
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=yourpassword
+      - MYSQL_DB=sanamed2
     ports:
-      - "5002:5002"  # Cambiado a 5002 para evitar conflicto
+      - "5002:5000"
+    networks:
+      - sanamed_network
     depends_on:
       - db
-    networks:
-      - sanamed-network
 
   profesional:
     build: ./profesional
+    container_name: profesional_service
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=yourpassword
+      - MYSQL_DB=sanamed2
     ports:
-      - "5003:5003"  # Cambiado a 5003 para evitar conflicto
+      - "5003:5000"
+    networks:
+      - sanamed_network
     depends_on:
       - db
-    networks:
-      - sanamed-network
-
-  admin:
-    build: ./administrador
-    ports:
-      - "5001:5001"  # Cambiado a 5004 para evitar conflicto
-    depends_on:
-      - db
-    networks:
-      - sanamed-network
-
-networks:
-  sanamed-network:
-    driver: bridge
 
 volumes:
-  mysql_data:
+  db_data:
+
+networks:
+  sanamed_network:
