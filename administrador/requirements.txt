@@ -1,6 +1,8 @@
-Flask==2.0.1
-Flask-MySQLdb==0.2.0
-Flask-CORS==3.0.10
-mysqlclient==2.0.3
-python-dotenv==0.19.0
-Werkzeug==2.0.3
+Flask
+flask-mysqldb
+requests
+Flask-CORS
+blueprint
+Flask-SQLAlchemy
+psycopg2
+pymysql

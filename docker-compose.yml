@@ -2,80 +2,57 @@ version: '3.8'
 
 services:
   db:
-    image: mysql:latest
-    container_name: sanamed_db
+    image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: yourpassword
+      MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: sanamed2
     ports:
-      - "3308:3307"
+      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
-    networks:
-      - sanamed_network
 
   administrador:
-    build: ./administrador
-    container_name: administrador_service
-    environment:
-      - MYSQL_HOST=db
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=yourpassword
-      - MYSQL_DB=sanamed2
-    ports:
-      - "5001:5000"
-    networks:
-      - sanamed_network
+    build:
+      context: ./administrador
+    env_file:
+      - .env
     depends_on:
       - db
+    ports:
+      - "5001:5000"
 
   home:
     build: ./home
-    container_name: home_service
-    environment:
-      - MYSQL_HOST=db
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=yourpassword
-      - MYSQL_DB=sanamed2
+    env_file:
+      - .env
+    depends_on:
+      - db
     ports:
       - "5000:5000"
-    networks:
-      - sanamed_network
-    depends_on:
-      - db
+    volumes:
+      - ./home:/usr/src/app
+    environment:
+      - FLASK_ENV=development
 
   paciente:
-    build: ./paciente
-    container_name: paciente_service
-    environment:
-      - MYSQL_HOST=db
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=yourpassword
-      - MYSQL_DB=sanamed2
+    build:
+      context: ./paciente
+    env_file:
+      - .env
+    depends_on:
+      - db
     ports:
       - "5002:5000"
-    networks:
-      - sanamed_network
-    depends_on:
-      - db
 
   profesional:
-    build: ./profesional
-    container_name: profesional_service
-    environment:
-      - MYSQL_HOST=db
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=yourpassword
-      - MYSQL_DB=sanamed2
-    ports:
-      - "5003:5000"
-    networks:
-      - sanamed_network
+    build:
+      context: ./profesional
+    env_file:
+      - .env
     depends_on:
       - db
+    ports:
+      - "5003:5000"
 
 volumes:
   db_data:
-
-networks:
-  sanamed_network:

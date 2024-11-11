@@ -1,27 +1,9 @@
-# Usar una imagen base de Python
-FROM python:3.9-slim
+FROM python:3.8
 
-# Establecer el directorio de trabajo
-WORKDIR /app
+COPY . /usr/src/app
+COPY requirements.txt /usr/src/app/requirements.txt
+WORKDIR /usr/src/app
 
-# Instalar las dependencias del sistema necesarias para mysqlclient
-RUN apt-get update && apt-get install -y \
-    default-libmysqlclient-dev \
-    build-essential \
-    pkg-config \
-    && rm -rf /var/lib/apt/lists/*
+RUN pip install -r requirements.txt
 
-# Copiar requirements.txt
-COPY requirements.txt .
-
-# Instalar dependencias de Python
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copiar el resto de la aplicación
-COPY . .
-
-# Exponer el puerto
-EXPOSE 5003
-
-# Comando para ejecutar la aplicación
-CMD ["python3", "app.py"]
+CMD ["python", "app.py", "--host", "0.0.0.0"]

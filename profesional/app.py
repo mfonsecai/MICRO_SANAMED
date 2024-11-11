@@ -1,19 +1,21 @@
+import os
 import re
-from datetime import datetime,date, timedelta
-from flask import Flask, render_template, request, session, redirect, url_for, jsonify,flash
-from flask_mysqldb import MySQL
+from datetime import datetime, timedelta
+from flask import Flask, render_template, request, session, redirect, url_for, flash
+from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
-
-import random
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+app.secret_key = "sanamed"
 
-# Configuración MySQL
-app.config["MYSQL_HOST"] = "db"
-app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = ""
-app.config["MYSQL_DB"] = "sanamed2"
-mysql = MySQL(app)
+# Configuración SQLAlchemy (Usar MySQL con SQLAlchemy)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "mysql+pymysql://root:@db:3306/sanamed2")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+# Inicializar SQLAlchemy
+db = SQLAlchemy(app)
 
 def professional_required(f):
     @wraps(f)
@@ -214,4 +216,4 @@ def add_header(response):
 
 if __name__ == '__main__':
     app.secret_key = "sanamed"
-    app.run(debug=True, host="0.0.0.0", port=5003)
+    app.run(debug=True, host="0.0.0.0", port=5000)

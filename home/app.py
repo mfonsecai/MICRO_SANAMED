@@ -1,7 +1,8 @@
+import os
 import re
 from datetime import datetime, timedelta
 from flask import Flask, render_template, request, session, redirect, url_for, flash
-from flask_mysqldb import MySQL
+from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
 from flask_cors import CORS
 
@@ -9,12 +10,12 @@ app = Flask(__name__)
 CORS(app)
 app.secret_key = "sanamed"
 
-# Configuración MySQL
-app.config["MYSQL_HOST"] = "db"
-app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = ""
-app.config["MYSQL_DB"] = "sanamed2"
-mysql = MySQL(app)
+# Configuración SQLAlchemy (Usar MySQL con SQLAlchemy)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "mysql+pymysql://root:@db:3306/sanamed2")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+# Inicializar SQLAlchemy
+db = SQLAlchemy(app)
 
 def obtener_id_usuario_actual():
     if 'id_usuario' in session:
@@ -62,24 +63,22 @@ def login():
         password = request.form['contrasena']
         rol = request.form['rol']
        
-        cur = mysql.connection.cursor()
-        
-        # Buscar en la tabla de usuarios
-        cur.execute("SELECT id_usuario FROM Usuarios WHERE correo = %s AND contrasena = %s AND tipo_perfil = %s", (username, password, rol))
-        user_data = cur.fetchone()
-       
-        # Si no se encuentra en la tabla de usuarios, buscar en la tabla de profesionales
-        if not user_data and rol == "profesional":
-            cur.execute("SELECT id_profesional FROM Profesionales WHERE correo = %s AND contrasena = %s", (username, password))
-            user_data = cur.fetchone()
-       
-        # Si aún no se encuentra, buscar en la tabla de administradores
-        if not user_data and rol == "admin":
-            cur.execute("SELECT id_administrador FROM Administradores WHERE correo = %s AND contrasena = %s", (username, password))
-            user_data = cur.fetchone()
-
-
-        cur.close()
+        # Realizar consulta en la base de datos usando SQLAlchemy
+        if rol == "usuario":
+            user_data = db.session.execute(
+                "SELECT id_usuario FROM Usuarios WHERE correo = :correo AND contrasena = :contrasena",
+                {"correo": username, "contrasena": password}
+            ).fetchone()
+        elif rol == "profesional":
+            user_data = db.session.execute(
+                "SELECT id_profesional FROM Profesionales WHERE correo = :correo AND contrasena = :contrasena",
+                {"correo": username, "contrasena": password}
+            ).fetchone()
+        elif rol == "admin":
+            user_data = db.session.execute(
+                "SELECT id_administrador FROM Administradores WHERE correo = :correo AND contrasena = :contrasena",
+                {"correo": username, "contrasena": password}
+            ).fetchone()
 
         if user_data:
             session['logged_in'] = True
@@ -87,11 +86,12 @@ def login():
             session['last_activity'] = datetime.now().isoformat()  # Agregar timestamp
             
             if rol == 'usuario':
-                return redirect("http://localhost:5002/user_home")  # Cambiar URL a la del microservicio usuario
+                return redirect("http://user_service/user_home")  # Redirige al microservicio de usuario
             elif rol == 'profesional':
-                return redirect("http://localhost:5003/profesional_home")  # Cambiar URL a la del microservicio profesional
+                return redirect("http://profesional_service/profesional_home")  # Redirige al microservicio profesional
             elif rol == 'admin':
-                return redirect("http://localhost:5001/admin_home")  # Cambiar URL a la del microservicio administrador
+                return redirect("http://admin_service/admin_home")  # Redirige al microservicio administrador
+
         else:
             flash("Credenciales incorrectas", "error")
             return render_template('index.html')
@@ -112,29 +112,29 @@ def register():
             flash("La contraseña debe tener al menos 8 caracteres, una mayúscula y un carácter especial.", "error")
             return render_template('register.html')
 
-        cur = mysql.connection.cursor()
-        cur.execute("SELECT id_usuario FROM Usuarios WHERE correo = %s", (correo,))
-        existing_user = cur.fetchone()
-        cur.close()
+        # Verificar si el usuario ya existe usando SQLAlchemy
+        existing_user = db.session.execute(
+            "SELECT id_usuario FROM Usuarios WHERE correo = :correo", 
+            {"correo": correo}
+        ).fetchone()
 
         if existing_user:
             flash("El correo electrónico ya está registrado. Por favor, utiliza otro correo electrónico", "error")
             return render_template('register.html')
 
-        cur = mysql.connection.cursor()
         try:
-            cur.execute(
-                "INSERT INTO Usuarios (nombre, tipo_documento, numero_documento, celular, correo, contrasena) VALUES (%s, %s, %s, %s, %s, %s)",
-                (nombre, tipo_documento, numero_documento, celular, correo, contrasena))
-            mysql.connection.commit()
+            # Insertar nuevo usuario en la base de datos usando SQLAlchemy
+            db.session.execute(
+                "INSERT INTO Usuarios (nombre, tipo_documento, numero_documento, celular, correo, contrasena) VALUES (:nombre, :tipo_documento, :numero_documento, :celular, :correo, :contrasena)",
+                {"nombre": nombre, "tipo_documento": tipo_documento, "numero_documento": numero_documento, "celular": celular, "correo": correo, "contrasena": contrasena}
+            )
+            db.session.commit()
             flash("Registro exitoso. Inicia sesión con tus credenciales.", "success")
             return redirect(url_for('index'))
         except Exception as e:
-            mysql.connection.rollback()
+            db.session.rollback()
             flash(f"Error: {e}", "error")
             return render_template('register.html')
-        finally:
-            cur.close()
 
     return render_template('register.html')
 
