@@ -1,60 +1,52 @@
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:8.0
+  db:
+    image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: sanamed2
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ""
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - sanamed-network
+      - mysql_data:/var/lib/mysql  # Para persistir datos de MySQL
+
 
   home:
     build: ./home
     ports:
-      - "5000:5000"
+      - "5000:5000"  # Cambiado a 5001 para evitar conflicto
     depends_on:
-      - mysql
-    environment:
-      - MYSQL_HOST=mysql
+      - db
     networks:
       - sanamed-network
 
   paciente:
     build: ./paciente
     ports:
-      - "5001:5001"
+      - "5002:5002"  # Cambiado a 5002 para evitar conflicto
     depends_on:
-      - mysql
-    environment:
-      - MYSQL_HOST=mysql
+      - db
     networks:
       - sanamed-network
 
   profesional:
     build: ./profesional
     ports:
-      - "5002:5002"
+      - "5003:5003"  # Cambiado a 5003 para evitar conflicto
     depends_on:
-      - mysql
-    environment:
-      - MYSQL_HOST=mysql
+      - db
     networks:
       - sanamed-network
 
   admin:
     build: ./administrador
     ports:
-      - "5003:5003"
+      - "5001:5001"  # Cambiado a 5004 para evitar conflicto
     depends_on:
-      - mysql
-    environment:
-      - MYSQL_HOST=mysql
+      - db
     networks:
       - sanamed-network
 
