@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='saludmental1.ico ') }}">
+s
+    <title>Agregar Profesional</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style14.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Agregar Profesional</h1>
+        <div class="appointment-form">
+
+        {% if error %}
+        <div class="alert" title="La contraseña debe tener al menos 8 caracteres, una mayúscula y un carácter especial">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            {{ error }}
+        </div>
+        {% endif %}
+        <form action="{{ url_for('agregar_profesional') }}" method="post">
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="especialidad">Especialidad:</label>
+                <input type="text" id="especialidad" name="especialidad" required>
+            </div>
+            <div class="form-group">
+                <label for="correo">Correo:</label>
+                <input type="email" id="correo" name="correo" required>
+            </div>
+            <div class="form-group">
+                <label for="contrasena">Contraseña:</label>
+                <input type="password" id="contrasena" name="contrasena" required>
+            </div>
+            <button type="submit">Agregar Profesional</button>
+        </form>
+        <div class="container-1">
+            <div class="config">
+                <a href="#" title="Ajustes"><img src="static/556-5567171_gear-setting-icon-clipart 1.png" alt="Ajustes"></a>
+            </div>
+            <div class="casa">
+                <a href="{{ url_for('admin_home') }}" title="Inicio"><img src="static/25694 1.png" alt="Inicio"></a>
+            </div>
+            <div class="download-20">
+                <a href="{{ url_for('index') }}" title="Cerrar Sesión"><img src="static/iconmonstr-log-out-17-240.png" alt="Cerrar Sesión"></a>
+            </div>
+        </div>
+</body>
+</html>
