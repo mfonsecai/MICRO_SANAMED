@@ -6,7 +6,7 @@ from functools import wraps
 
 import random
 
-app = Flask(__name__, template_folder="home/templates")
+app = Flask(__name__)
 app.secret_key = "sanamed"
 
 
@@ -169,4 +169,4 @@ def logout():
 
 if __name__ == '__main__':
     app.secret_key = "sanamed"
-    app.run(debug=True, host="0.0.0.0", port=5001)
+    app.run(debug=True, host="0.0.0.0", port=5000)

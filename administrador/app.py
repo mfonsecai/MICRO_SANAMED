@@ -3,7 +3,7 @@ from datetime import datetime,date, timedelta
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify,flash
 from flask_mysqldb import MySQL
 from functools import wraps
-
+from flask_cors import CORS
 import random
 
 app = Flask(__name__)
@@ -15,13 +15,13 @@ app.config["MYSQL_PASSWORD"] = ""
 app.config["MYSQL_DB"] = "sanamed2"
 mysql = MySQL(app)
 
-
+CORS(app, origins=["http://localhost:5000", "http://localhost:5001", "http://localhost:5002", "http://localhost:5003"])
 
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'logged_in' not in session or session.get('rol') != 'admin':
-            return redirect('http://localhost:5001/login')
+            return redirect('http://localhost:5000/login')
         return f(*args, **kwargs)
     return decorated_function
 
@@ -177,4 +177,4 @@ def eliminar_cita(id):
 
 if __name__ == '__main__':
     app.secret_key = "sanamed"
-    app.run(debug=True, host="0.0.0.0", port=5003)
+    app.run(debug=True, host="0.0.0.0", port=5001)
