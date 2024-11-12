@@ -85,12 +85,12 @@ def login():
             session['id_usuario'] = user_data[0]
             session['last_activity'] = datetime.now().isoformat()  # Agregar timestamp
             
-            if rol == 'usuario':
-                return redirect("http://user_service/user_home")  # Redirige al microservicio de usuario
-            elif rol == 'profesional':
-                return redirect("http://profesional_service/profesional_home")  # Redirige al microservicio profesional
-            elif rol == 'admin':
-                return redirect("http://admin_service/admin_home")  # Redirige al microservicio administrador
+        if rol == 'usuario':
+            return redirect("http://home:5002/user_home")  # Cambiar localhost por el nombre del contenedor en la red de Docker
+        elif rol == 'profesional':
+            return redirect("http://profesional:5003/profesional_home")
+        elif rol == 'admin':
+            return redirect("http://administrador:5001/admin_home")
 
         else:
             flash("Credenciales incorrectas", "error")
