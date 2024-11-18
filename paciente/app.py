@@ -74,6 +74,17 @@ def obtener_nombre_profesional(id_profesional):
     nombre_profesional = cur.fetchone()[0]
     cur.close()
     return nombre_profesional
+def obtener_conteo_emociones_por_fecha(fecha):
+    cur = mysql.connection.cursor()
+    query = "SELECT emocion FROM Emociones WHERE DATE(fecha_emocion) = %s"
+    cur.execute(query, (fecha,))
+    emociones = [row[0] for row in cur.fetchall()]
+    cur.close()
+    
+    # Contar cada emoción y devolver en formato JSON serializable
+    conteo_emociones = dict(Counter(emociones))
+    return conteo_emociones
+
 
 @app.route('/user_home')
 @login_required
@@ -204,6 +215,26 @@ def seleccionar_dia():
             mensaje = "No hay emociones registradas para este día."
             return render_template('calendario.html', mensaje=mensaje)
         return render_template('emociones.html', fecha_seleccionada=fecha_seleccionada, emociones_horas=zip(emociones, horas))
+    
+@app.route('/ver_grafica/<fecha>')
+@login_required
+def ver_grafica(fecha):
+    conteo_emociones = obtener_conteo_emociones_por_fecha(fecha)
+    
+    if not conteo_emociones:
+        mensaje = "No hay emociones registradas para este día."
+        return render_template('calendario.html', mensaje=mensaje)
+    
+    # Extraer etiquetas (emociones) y valores (conteo de cada emoción)
+    emociones = list(conteo_emociones.keys())
+    cantidades = list(conteo_emociones.values())
+    
+    return render_template(
+        'grafica_emociones.html', 
+        fecha_seleccionada=fecha, 
+        emociones=emociones, 
+        cantidades=cantidades
+    )
 
 @app.route('/consultas_dia', methods=["GET", 'POST'])
 @login_required
