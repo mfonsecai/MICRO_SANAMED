@@ -11,9 +11,6 @@ body {
     background-size: cover;
     line-height: 1.6;
 }
-
-
-/* Estilos para el contenedor principal */
 .container {
     width: 1280px;
     height: 760px;
@@ -24,7 +21,6 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
-
 h1 {
     text-align: center;
     margin: 10px;
@@ -34,8 +30,53 @@ h1 {
 }
 
 
+.appointment-form table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    margin: 20px auto;
+    font-size: 17px;
+}
 
-/* Contenedor para hacer la tabla escroleable */
+.appointment-form th,
+.appointment-form td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.container a {
+    color: green;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold; /* Texto en negrilla */
+    margin-top: -50px; /* Ajusta el margen superior del enlace */
+    margin-bottom: 10px;
+    display: inline-block; /* Permite aplicar el margen superior */
+}
+
+form {
+    display: inline;
+}
+
+button {
+    width: 80px;
+    height: 40px;
+    background-color: #8DCB9E;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: darkgreen;
+}
+
+
 .appointment-form {
     max-width: 1000px;
     margin: auto;
@@ -44,33 +85,8 @@ h1 {
     background-color: #f9f9f9;
     border-radius: 10px;
     margin-top: 2px;
-    
     overflow-y: auto;  /* Habilita el scroll vertical si hay muchas entradas */
 }
-
-.appointment-form table {
-    width: 100%; /* Asegura que la tabla ocupe todo el ancho del formulario */
-    max-height: 100%; /* Evita que la tabla exceda la altura del contenedor */
-    border-collapse: collapse; /* Colapsa los bordes de la tabla para que parezca una cuadrícula */
-    font-size: 16px; /* Reduce el tamaño de la letra para que toda la tabla sea visible */
-}
-
-.appointment-form th,
-.appointment-form td {
-    padding: 2px; /* Añade un espacio entre el contenido y los bordes de las celdas */
-    border: 1px solid #ddd; /* Agrega bordes a todas las celdas */
-    max-width: calc(90% / 3); /* Divide el ancho de la tabla en tres columnas */
-    word-wrap: break-word; /* Permite que el contenido largo se divida en múltiples líneas */
-    text-align: center; /* Alinea el texto a la izquierda */
-}
-@media (max-width: 480px) {
-    body {
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        overflow: hidden; /* Previene el desplazamiento */
-    } }
-
 
 .imagen-superior {
     width: 100%;
@@ -131,3 +147,6 @@ h1 {
 .show {
     display: block;
 }
+
+
+

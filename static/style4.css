@@ -11,6 +11,8 @@ body {
     background-size: cover;
     line-height: 1.6;
 }
+
+/* Contenedor principal */
 .container {
     width: 1280px;
     height: 760px;
@@ -22,73 +24,56 @@ body {
     text-align: center;
 }
 
+
 h1 {
     text-align: center;
-    margin: 10px;
+    margin: 15px;
     font-size: 2.5em;
     color: #000000;
     font-family: "Jomhuria", serif;
 }
+ h1.titulo-centrado {
+    font-size: bold;
+}
 
 
-
-.appointment-form table {
+/* Tabla de emociones */
+.emotion-table {
     width: 100%;
     border-collapse: collapse;
     border: 1px solid #ddd;
     margin: 20px auto;
-    font-size: 17px;
 }
 
-.appointment-form th,
-.appointment-form td {
+.emotion-table th, .emotion-table td {
     padding: 15px;
-    text-align: center;
+    text-align: left;
     border: 1px solid #ddd;
 }
 
-.container a {
-    color: green;
-    text-decoration: none;
-    font-size: 20px;
-    font-weight: bold; /* Texto en negrilla */
-    margin-top: -50px; /* Ajusta el margen superior del enlace */
-    margin-bottom: 10px;
-    display: inline-block; /* Permite aplicar el margen superior */
+.emotion-table thead th {
+    background-color: #f2f2f2;
 }
 
-
-
-form {
-    display: inline;
+.emotion-row td {
+    color: #000;
 }
 
-.form-submit {
-    display: inline-block;
-    width: 80px;
-    height: 40px;
-    padding: 0 auto;
-    background-color: #8DCB9E;
-    color: white;
-    text-decoration: none;
-    border: none;
-    border-radius: 5px;
-    font-size: 13px;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: background-color 0.3s ease;
-    text-align: center; /* Alinea el texto a la izquierda */
-
+/* Contenedor para hacer la tabla escroleable */
+.appointment-form {
+    max-width: 1000px;
+    margin: auto;
+    height: 560px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    margin-top: 2px;
+    overflow-y: auto;  /* Habilita el scroll vertical si hay muchas entradas */
 }
 
-.form-submit:hover {
-    background-color: darkgreen;
-}
-
-    
 button {
     margin-top: 20px;
-    width: 300px;
+    width: 200px;
     height: 60px;
     background-color: #8DCB9E;
     color: white;
@@ -104,37 +89,22 @@ button {
 button:hover {
     background-color: darkgreen;
 }
-  
-
-  
-  @media (max-width: 600px) {
-    .container-1 {
-        padding: 5px 0; /* Ajusta el padding para pantallas más pequeñas */
-    }
-  
-    .container-1 a img {
-        transform: translateY(5px); /* Ajusta la posición para pantallas más pequeñas */
-    }
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-/* Contenedor para hacer la tabla escroleable */
-.appointment-form {
-    max-width: 1000px;
-    margin: auto;
-    height: 500px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    margin-top: 2px;
-    overflow-y: auto;  /* Habilita el scroll vertical si hay muchas entradas */
+.btn-volver{
+    margin-top: 8px;
+    width: 150px;
+    height: 50px;
+    background-color: #8DCB9E;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-  .imagen-superior {
+.imagen-superior {
     width: 100%;
     height: auto;
     max-height: 100px;

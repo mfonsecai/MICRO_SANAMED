@@ -81,23 +81,29 @@ h1 {
     box-sizing: border-box;
 }
 
-.form-submit {
-    display: inline-block;
-    width: 100%;
-    padding: 20px;
+button {
+    margin-top: 20px;
+    width: 300px;
+    height: 60px;
     background-color: #8DCB9E;
     color: white;
     text-decoration: none;
     border: none;
     border-radius: 5px;
-    font-size: 22px;
+    font-size: 15px;
+    font-weight: bold;
     cursor: pointer;
-    margin-top: 100px;
     transition: background-color 0.3s ease;
 }
 
-.form-submit:hover {
+button:hover {
     background-color: darkgreen;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    margin-top: 20px; /* Ajusta el espacio superior si es necesario */
 }
 
 

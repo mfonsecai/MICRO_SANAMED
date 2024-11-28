@@ -4,11 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{{ url_for('static', filename='saludmental1.ico ') }}">
-s
     <title>Agregar Profesional</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style14.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style24.css') }}">
 </head>
 <body>
+    <h1 class="titulo-centrado">SANAMED</h1>
+    <img src="static/rectangle 6.png" alt="Imagen Superior" class="imagen-superior">
+    <img src="static/saludmental1.png" alt="Imagen Esquina Izquierda" class="imagen-esquina izquierda">
+  
+    <div class="menu-container">
+        <img src="static/saludmental1.png" alt="Imagen Esquina Derecha" class="imagen-esquina derecha" id="menu-toggle">
+        <div class="menu-dropdown" id="menu-dropdown">
+            <a href="{{ url_for('profesional_home') }}">Home</a>
+            <a href="{{ url_for('configuracion') }}">Configuración</a>
+            <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
+
+        </div>
+    </div>
     <div class="container">
         <h1>Agregar Profesional</h1>
         <div class="appointment-form">
@@ -38,16 +50,5 @@ s
             </div>
             <button type="submit">Agregar Profesional</button>
         </form>
-        <div class="container-1">
-            <div class="config">
-                <a href="#" title="Ajustes"><img src="static/556-5567171_gear-setting-icon-clipart 1.png" alt="Ajustes"></a>
-            </div>
-            <div class="casa">
-                <a href="{{ url_for('admin_home') }}" title="Inicio"><img src="static/25694 1.png" alt="Inicio"></a>
-            </div>
-            <div class="download-20">
-                <a href="{{ url_for('index') }}" title="Cerrar Sesión"><img src="static/iconmonstr-log-out-17-240.png" alt="Cerrar Sesión"></a>
-            </div>
-        </div>
 </body>
 </html>
